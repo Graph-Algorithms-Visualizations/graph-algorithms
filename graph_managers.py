@@ -3,7 +3,12 @@ from PyQt5.QtCore import Qt
 from graphic_items import Node, Edge
 
 class GraphManager:
-
+    # Parameters as container nodes and edge_matrix
+    # edge matrix stores the connections check dummy data for example
+    # nodes is a dictionary of cordinates as values mapped to its indices as keys
+    # converted nodes to self.nodes which is dictionary of nodes class object mapped to indices as keys
+    # converted edge_matrix to self.edges which is 2d matrix of edge class objects
+    
     def __init__(self, container, nodes, edge_matrix):
         self.container = container
         self.nodes = {}
@@ -19,10 +24,17 @@ class GraphManager:
 
         self.temp_edge = None
 
+
+    # adds edge in gui and in stored matrix
+    # any doubt contact arib
+
     def addEdge(self, edge, temp=False):
         self.container.addItem(edge)
         if not temp:
             self.edges[edge.fromNode.key][edge.toNode.key] = edge
+
+    # removes edge in gui and stored matrix
+    # any doubt contact sid
 
     def removeEdge(self, edge, temp=False):
         self.container.removeItem(edge)  
@@ -32,12 +44,18 @@ class GraphManager:
             # self.edges.remove(edge)
             # self.printEdgeMatrix()
 
+    # adds edge in gui and in stored matrix
+    # any doubt contact arib
+
     def addNode(self, key, node):
         self.container.addItem(node)
         self.nodes[key] = node
         self.edges.append([None]*key)
         for row in self.edges:
             row.append(None)
+
+    # removes node in gui and stored matrix and 
+    # any doubt contact sid
 
     def removeNode(self, node):
         self.container.removeItem(node)
@@ -54,6 +72,7 @@ class GraphManager:
         # self.printEdgeMatrix()
         # self.nodes.remove(node.key)
 
+    # any doubt contact arib 
 
     def mouseMoveEvent(self, event, item):
 
@@ -74,6 +93,8 @@ class GraphManager:
             self.temp_edge.setEnd(mousePos.x(), mousePos.y())
             self.container.update()
 
+    # any doubt contact arib
+
     def mouseReleaseEvent(self, event, item):
         if item and item.type == 'node':
 
@@ -90,6 +111,8 @@ class GraphManager:
 
         self.container.update()
 
+    # any doubt contact arib
+
     def mousePressEvent(self, event, item):
         mousePos = event.scenePos()
         if item and item.type == 'node':
@@ -105,6 +128,8 @@ class GraphManager:
             self.addNode(self.currentKey, node)
             self.currentKey += 1
 
+    # any doubt contact arib
+    
     def printEdgeMatrix(self):
         for row in self.edges:
             for edge in row:
