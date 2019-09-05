@@ -1,11 +1,8 @@
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
-from PyQt5.QtGui import QTransform
+from PyQt5.QtGui import QTransform, QPainter
 from PyQt5.QtCore import QSize
 
-from graphic_items import *
 from graph_managers import GraphManager
-
-from dummy_data import get_processed_data
 
 
 class GraphContainer(QGraphicsScene):
@@ -14,7 +11,7 @@ class GraphContainer(QGraphicsScene):
         super().__init__()
         self.pressed = False
         self.drawing_edge = None
-        node_objs, edge_matrix = {}, []
+        node_objs, edge_matrix = {}, []     # Open from a pickle file
         self.GraphManager = GraphManager(self, node_objs, edge_matrix)
 
     def mousePressEvent(self, event):
@@ -50,6 +47,7 @@ if __name__ == '__main__':
 
     view = QGraphicsView()
     view.setScene(scene)
+    view.setRenderHint(QPainter.Antialiasing)
     view.resize(QSize(500, 500))
     view.show()
 
