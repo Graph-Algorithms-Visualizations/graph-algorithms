@@ -3,6 +3,9 @@ from PyQt5.QtGui import QTransform
 from PyQt5.QtCore import QSize
 
 from graphic_items import *
+from graph_managers import NodeManager, EdgeManager
+
+from dummy_data import get_processed_data
 
 
 class GraphContainer(QGraphicsScene):
@@ -13,6 +16,9 @@ class GraphContainer(QGraphicsScene):
         self.edges = []
         self.pressed = False
         self.drawing_edge = None
+        node_objs, edge_matrix = get_processed_data()
+        self.nodeManager = NodeManager(self, node_objs)
+        self.edgeManager = EdgeManager(self, edge_matrix)
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
@@ -20,19 +26,7 @@ class GraphContainer(QGraphicsScene):
 
         mousePos = event.scenePos()
         item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-        if item:
-
-            # Remove node if right-button clicked
-            if event.button() == Qt.RightButton:
-                self.removeItem(item)
-
-        else:
-
-            # Add Node
-            node = Node(mousePos.x(), mousePos.y())
-            self.nodes.append(node)
-            self.addItem(node)
-
+        self.nodeManager.mousePressEvent(event, item)
         self.update()
 
     def mouseMoveEvent(self, event):
@@ -42,21 +36,7 @@ class GraphContainer(QGraphicsScene):
 
             mousePos = event.scenePos()
             item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-            if item and item.type == 'node':
-
-                if self.drawing_edge:
-                    # This is the end node
-                    self.drawing_edge.setEnd(item.center.x(), item.center.y())
-                else:
-                    # This is the start node
-                    self.drawing_edge = Edge(item, None)
-                    self.addItem(self.drawing_edge)
-
-                self.update()
-
-            elif self.drawing_edge:
-                self.drawing_edge.setEnd(mousePos.x(), mousePos.y())
-                self.update()
+            self.edgeManager.mouseMoveEvent(event, item)
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
@@ -64,18 +44,7 @@ class GraphContainer(QGraphicsScene):
 
         mousePos = event.scenePos()
         item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-        if item and item.type == 'node':
-
-            # If we are drawing edge and mouse is released at a node, then add that edge
-            if self.drawing_edge and item is not self.drawing_edge.fromNode:
-                self.edges.append(self.drawing_edge)
-                self.drawing_edge = None
-
-        elif self.drawing_edge:
-            self.removeItem(self.drawing_edge)
-            self.drawing_edge = None
-
-        self.update()
+        self.edgeManager.mouseReleaseEvent(event, item)
 
 
 if __name__ == '__main__':
