@@ -3,7 +3,7 @@ from PyQt5.QtGui import QTransform
 from PyQt5.QtCore import QSize
 
 from graphic_items import *
-from graph_managers import NodeManager, EdgeManager
+from graph_managers import GraphManager
 
 from dummy_data import get_processed_data
 
@@ -17,8 +17,7 @@ class GraphContainer(QGraphicsScene):
         self.pressed = False
         self.drawing_edge = None
         node_objs, edge_matrix = get_processed_data()
-        self.nodeManager = NodeManager(self, node_objs)
-        self.edgeManager = EdgeManager(self, edge_matrix)
+        self.GraphManager = GraphManager(self, node_objs, edge_matrix)
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
@@ -26,7 +25,7 @@ class GraphContainer(QGraphicsScene):
 
         mousePos = event.scenePos()
         item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-        self.nodeManager.mousePressEvent(event, item)
+        self.GraphManager.mousePressEvent(event, item)
         self.update()
 
     def mouseMoveEvent(self, event):
@@ -36,7 +35,7 @@ class GraphContainer(QGraphicsScene):
 
             mousePos = event.scenePos()
             item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-            self.edgeManager.mouseMoveEvent(event, item)
+            self.GraphManager.mouseMoveEvent(event, item)
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
@@ -44,7 +43,7 @@ class GraphContainer(QGraphicsScene):
 
         mousePos = event.scenePos()
         item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-        self.edgeManager.mouseReleaseEvent(event, item)
+        self.GraphManager.mouseReleaseEvent(event, item)
 
 
 if __name__ == '__main__':
