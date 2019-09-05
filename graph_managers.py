@@ -27,9 +27,10 @@ class GraphManager:
     def removeEdge(self, edge, temp=False):
         self.container.removeItem(edge)  
         if not temp:
-            self.edges[edge.toNode.key][edge.fromNode.key] = None
+            self.edges[edge.fromNode.key][edge.toNode.key] = None
             # print(self.edges)   
             # self.edges.remove(edge)
+            # self.printEdgeMatrix()
 
     def addNode(self, key, node):
         self.container.addItem(node)
@@ -40,6 +41,7 @@ class GraphManager:
 
     def removeNode(self, node):
         self.container.removeItem(node)
+        self.nodes.pop(node.key)
         for i in range(len(self.edges)):
             if(self.edges[node.key][i] != None):
                 self.container.removeItem(self.edges[node.key][i])
@@ -49,7 +51,7 @@ class GraphManager:
             if(self.edges[i][node.key] != None):
                 self.container.removeItem(self.edges[i][node.key])
                 self.edges[i][node.key] = None
-                # print(self.edges)
+        # self.printEdgeMatrix()
         # self.nodes.remove(node.key)
 
 
