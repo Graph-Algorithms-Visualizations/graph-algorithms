@@ -62,12 +62,12 @@ class GraphManager:
         self.container.removeItem(node)
         self.nodes.pop(node.key)
         for i in range(len(self.edges)):
-            if(self.edges[node.key][i] != None):
+            if not self.edges[node.key][i]:
                 self.container.removeItem(self.edges[node.key][i])
                 self.edges[node.key][i] = None
                 # print(self.edges)
         for i in range(len(self.edges)):
-            if(self.edges[i][node.key] != None):
+            if not self.edges[i][node.key]:
                 self.container.removeItem(self.edges[i][node.key])
                 self.edges[i][node.key] = None
 
@@ -154,3 +154,6 @@ class GraphManager:
             self.toggleItem(node)
             self.selectedItem.clicked = False
             self.selectedItem = None
+
+    def getData(self):
+        return self.nodes, self.edges
