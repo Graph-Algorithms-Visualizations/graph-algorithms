@@ -11,11 +11,12 @@ class Node(QGraphicsItem):
         self.center = QPoint(x, y)
         self.onFocus = False
         self.radius = 10
+        self.clicked = False
         self.type = 'node'
         self.key = key
 
     def paint(self, painter, styleoptions, widget=None):
-        if self.onFocus:
+        if self.onFocus or self.clicked:
             painter.setBrush(QBrush(Qt.yellow))
         else:
             painter.setBrush(QBrush(Qt.red))
@@ -46,8 +47,27 @@ class Edge(QGraphicsLineItem):
             self.endy = fromNode.center.y()
 
         super().__init__(fromNode.center.x(), fromNode.center.y(), self.endx, self.endy)
-        self.setPen(QPen(Qt.black, 3))
+        self.setPen(QPen(Qt.black, 5))
         self.setZValue(-1)
+        self.type = 'edge'
+        self.clicked = False
+        self.setAcceptHoverEvents(True)
+        self.onFocus = False
 
     def setEnd(self, x, y):
         self.setLine(self.fromNode.center.x(), self.fromNode.center.y(), x, y)
+
+    def paint(self, painter, styleoptions, widget=None):
+        if self.clicked or self.onFocus:
+            self.setPen(QPen(Qt.darkYellow, 6))
+        else:
+            self.setPen(QPen(Qt.black, 6))
+        super().paint(painter, styleoptions, widget)
+
+    def hoverEnterEvent(self, event):
+        self.onFocus = True
+        self.update()
+
+    def hoverLeaveEvent(self, event):
+        self.onFocus = False
+        self.update()
