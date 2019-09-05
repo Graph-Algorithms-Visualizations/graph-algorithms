@@ -27,7 +27,9 @@ class GraphManager:
     def removeEdge(self, edge, temp=False):
         self.container.removeItem(edge)  
         if not temp:
-            self.edges.remove(edge)
+            self.edges[edge.toNode.key][edge.fromNode.key] = None
+            # print(self.edges)   
+            # self.edges.remove(edge)
 
     def addNode(self, key, node):
         self.container.addItem(node)
@@ -38,7 +40,17 @@ class GraphManager:
 
     def removeNode(self, node):
         self.container.removeItem(node)
-        self.nodes.remove(node)
+        for i in range(len(self.edges)):
+            if(self.edges[node.key][i] != None):
+                self.container.removeItem(self.edges[node.key][i])
+                self.edges[node.key][i] = None
+                # print(self.edges)
+        for i in range(len(self.edges)):
+            if(self.edges[i][node.key] != None):
+                self.container.removeItem(self.edges[i][node.key])
+                self.edges[i][node.key] = None
+                # print(self.edges)
+        # self.nodes.remove(node.key)
 
 
     def mouseMoveEvent(self, event, item):
