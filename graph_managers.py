@@ -2,18 +2,16 @@ from PyQt5.QtCore import Qt
 
 from graphic_items import Node, Edge
 
-
-
 class GraphManager:
 
     def __init__(self, container, nodes, edge_matrix):
         self.container = container
         self.nodes = {}
+        self.edges = []
         for key, val in nodes.items():
             self.addNode(key, val)
         self.currentKey = len(nodes)
 
-        self.edges = edge_matrix
         for row in edge_matrix:
             for edge in row:
                 if edge:
@@ -21,11 +19,10 @@ class GraphManager:
 
         self.temp_edge = None
 
-
     def addEdge(self, edge, temp=False):
+        self.container.addItem(edge)
         if not temp:
             self.edges[edge.fromNode.key][edge.toNode.key] = edge
-        self.container.addItem(edge)
 
     def removeEdge(self, edge, temp=False):
         self.container.removeItem(edge)  
@@ -33,8 +30,11 @@ class GraphManager:
             self.edges.remove(edge)
 
     def addNode(self, key, node):
-        self.nodes[key] = node
         self.container.addItem(node)
+        self.nodes[key] = node
+        self.edges.append([None]*key)
+        for row in self.edges:
+            row.append(None)
 
     def removeNode(self, node):
         self.container.removeItem(node)
@@ -90,3 +90,13 @@ class GraphManager:
             node = Node(mousePos.x(), mousePos.y(), self.currentKey)
             self.addNode(self.currentKey, node)
             self.currentKey += 1
+
+    def printEdgeMatrix(self):
+        for row in self.edges:
+            for edge in row:
+                if edge:
+                    print("1", end=' ')
+                else:
+                    print("0", end=' ')
+            print()
+        print()
