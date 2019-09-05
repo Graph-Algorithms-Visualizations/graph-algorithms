@@ -12,11 +12,9 @@ class GraphContainer(QGraphicsScene):
 
     def __init__(self):
         super().__init__()
-        self.nodes = []
-        self.edges = []
         self.pressed = False
         self.drawing_edge = None
-        node_objs, edge_matrix = get_processed_data()
+        node_objs, edge_matrix = {}, []
         self.GraphManager = GraphManager(self, node_objs, edge_matrix)
 
     def mousePressEvent(self, event):

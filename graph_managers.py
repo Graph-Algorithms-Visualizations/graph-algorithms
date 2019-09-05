@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 
 from graphic_items import Node, Edge
 
+
 class GraphManager:
     # Parameters as container nodes and edge_matrix
     # edge matrix stores the connections check dummy data for example
@@ -23,7 +24,7 @@ class GraphManager:
                     self.addEdge(edge)
 
         self.temp_edge = None
-
+        self.selectedItem = None
 
     # adds edge in gui and in stored matrix
     # any doubt contact arib
@@ -69,10 +70,21 @@ class GraphManager:
             if(self.edges[i][node.key] != None):
                 self.container.removeItem(self.edges[i][node.key])
                 self.edges[i][node.key] = None
-        # self.printEdgeMatrix()
-        # self.nodes.remove(node.key)
 
-    # any doubt contact arib 
+
+    # any doubt contact arib
+    def toggleItem(self, item):
+
+        if self.selectedItem and item is self.selectedItem:
+            self.selectedItem.clicked = False
+            self.selectedItem = None
+        elif self.selectedItem:
+            self.selectedItem.clicked = False
+            self.selectedItem = item
+            self.selectedItem.clicked = True
+        else:
+            self.selectedItem = item
+            self.selectedItem.clicked = True
 
     def mouseMoveEvent(self, event, item):
 
@@ -118,8 +130,19 @@ class GraphManager:
         if item and item.type == 'node':
 
             # Remove node if right-button clicked
-            if event.button() == Qt.RightButton:
+            if item is self.selectedItem and event.button() == Qt.RightButton:
                 self.removeNode(item)
+
+            if event.button() == Qt.LeftButton:
+                self.toggleItem(item)
+
+        elif item and item.type == 'edge':
+
+            if item is self.selectedItem and event.button() == Qt.RightButton:
+                self.removeEdge(item)
+
+            if event.button() == Qt.LeftButton:
+                self.toggleItem(item)
 
         else:
 
@@ -128,14 +151,6 @@ class GraphManager:
             self.addNode(self.currentKey, node)
             self.currentKey += 1
 
-    # any doubt contact arib
-    
-    def printEdgeMatrix(self):
-        for row in self.edges:
-            for edge in row:
-                if edge:
-                    print("1", end=' ')
-                else:
-                    print("0", end=' ')
-            print()
-        print()
+            self.toggleItem(node)
+            self.selectedItem.clicked = False
+            self.selectedItem = None
