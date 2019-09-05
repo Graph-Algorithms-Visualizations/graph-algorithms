@@ -5,13 +5,14 @@ from PyQt5.QtCore import Qt, QRectF, QPoint
 
 class Node(QGraphicsItem):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, key):
         super().__init__()
         self.setAcceptHoverEvents(True)
         self.center = QPoint(x, y)
         self.onFocus = False
         self.radius = 10
         self.type = 'node'
+        self.key = key
 
     def paint(self, painter, styleoptions, widget=None):
         if self.onFocus:
