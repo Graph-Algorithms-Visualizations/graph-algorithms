@@ -13,6 +13,7 @@ class MyWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Graph Viewer")
         self.resize(width, height)
+        self.setStyleSheet("QMainWindow {background: 'grey';}")
 
         self.view = GraphViewer()
 
@@ -35,8 +36,9 @@ class MyWindow(QMainWindow):
         fileMenu.addAction(openFileAction)
         fileMenu.addAction(saveFileAction)
 
+        self.isViewMounted = False
+
         self.setMenuBar(menuBar)
-        self.setCentralWidget(self.view)
         self.show()
 
     def newGraph(self):
@@ -46,6 +48,10 @@ class MyWindow(QMainWindow):
                                           QMessageBox.Yes | QMessageBox.No)
             if choice == QMessageBox.No:
                 return
+
+        if not self.isViewMounted:
+            self.setCentralWidget(self.view)
+            self.isViewMounted = True
 
         self.view.newData()
         self.saveFileAction.setDisabled(False)
@@ -60,10 +66,15 @@ class MyWindow(QMainWindow):
             graphData = pickle.load(graphFile)
             nodes = graphData['nodes']
             edges = graphData['edges']
+            rotation_angle = graphData['angle']
             node_objs, edge_matrix = processBackendData(nodes, edges)
-            self.view.setData(node_objs, edge_matrix)
+            self.view.setData(node_objs, edge_matrix, rotation_angle)
             graphFile.close()
             self.saveFileAction.setDisabled(False)
+
+            if not self.isViewMounted:
+                self.setCentralWidget(self.view)
+
 
     def saveGraph(self):
         graphData = self.view.getData()
@@ -79,19 +90,23 @@ class GraphViewer(QGraphicsView):
         super().__init__()
         self.setRenderHint(QPainter.Antialiasing)
         self.container = None
+        self.angle = 0
 
     def newData(self):
-        self.setData({}, [])
+        self.setData({}, [], 0)
 
     def getData(self):
-        return self.container.getGraphData()
+        data = self.container.getGraphData()
+        data['angle'] = self.angle
+        return data
 
-    def setData(self, node_objs, edge_matrix):
+    def setData(self, node_objs, edge_matrix, rotation_angle):
         if not self.container:
             self.container = GraphContainer(node_objs, edge_matrix)
             self.setScene(self.container)
         else:
             self.container.setGraphData(node_objs, edge_matrix)
+        self.rotate(rotation_angle - self.angle)
 
 
 class GraphContainer(QGraphicsScene):
