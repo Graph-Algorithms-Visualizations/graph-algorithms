@@ -151,13 +151,23 @@ class GraphManager:
         else:
 
             # Add Node
+            # node = Node(mousePos.x(), mousePos.y(), self.currentKey)
+            # self.addNode(self.currentKey, node)
+            # self.currentKey += 1
+
+            # self.toggleItem(node)
+            if self.selectedItem:
+                self.selectedItem.clicked = False
+                self.selectedItem = None
+
+    def mouseDoubleClickEvent(self, event, item):
+        mousePos = event.scenePos()
+        if not item:
+            # Add Node
             node = Node(mousePos.x(), mousePos.y(), self.currentKey)
             self.addNode(self.currentKey, node)
             self.currentKey += 1
 
-            self.toggleItem(node)
-            self.selectedItem.clicked = False
-            self.selectedItem = None
 
     def getData(self):
         return self.nodes, self.edges
