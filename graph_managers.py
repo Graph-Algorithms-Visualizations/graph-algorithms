@@ -12,11 +12,18 @@ class GraphManager:
     
     def __init__(self, container, nodes, edge_matrix):
         self.container = container
+        if len(nodes) > 0:
+            self.currentKey = max([key for key in nodes]) + 1
+        else:
+            self.currentKey = 0
+
         self.nodes = {}
         self.edges = []
+        for _ in range(self.currentKey):
+            self.edges.append([None] * self.currentKey)
+
         for key, val in nodes.items():
             self.addNode(key, val)
-        self.currentKey = len(nodes)
 
         for row in edge_matrix:
             for edge in row:
@@ -30,7 +37,8 @@ class GraphManager:
     # any doubt contact arib
 
     def addEdge(self, edge, temp=False):
-        self.container.addItem(edge)
+        if edge:
+            self.container.addItem(edge)
         if not temp:
             self.edges[edge.fromNode.key][edge.toNode.key] = edge
 
@@ -41,9 +49,7 @@ class GraphManager:
         self.container.removeItem(edge)  
         if not temp:
             self.edges[edge.fromNode.key][edge.toNode.key] = None
-            # print(self.edges)   
-            # self.edges.remove(edge)
-            # self.printEdgeMatrix()
+
 
     # adds edge in gui and in stored matrix
     # any doubt contact arib
@@ -51,9 +57,11 @@ class GraphManager:
     def addNode(self, key, node):
         self.container.addItem(node)
         self.nodes[key] = node
-        self.edges.append([None]*key)
-        for row in self.edges:
-            row.append(None)
+        if key == self.currentKey:
+            self.edges.append([None]*key)
+            for row in self.edges:
+                row.append(None)
+
 
     # removes node in gui and stored matrix and 
     # any doubt contact sid
@@ -61,16 +69,12 @@ class GraphManager:
     def removeNode(self, node):
         self.container.removeItem(node)
         self.nodes.pop(node.key)
+        for edge in self.edges[node.key]:
+            if edge:
+                self.removeEdge(edge)
         for i in range(len(self.edges)):
-            if not self.edges[node.key][i]:
-                self.container.removeItem(self.edges[node.key][i])
-                self.edges[node.key][i] = None
-                # print(self.edges)
-        for i in range(len(self.edges)):
-            if not self.edges[i][node.key]:
-                self.container.removeItem(self.edges[i][node.key])
-                self.edges[i][node.key] = None
-
+            if self.edges[i][node.key]:
+                self.removeEdge(self.edges[i][node.key])
 
     # any doubt contact arib
     def toggleItem(self, item):
@@ -157,3 +161,13 @@ class GraphManager:
 
     def getData(self):
         return self.nodes, self.edges
+
+    def printMatrix(self):
+        for row in self.edges:
+            for edge in row:
+                if edge:
+                    print("1", end=" ")
+                else:
+                    print("0", end=" ")
+            print()
+        print()
