@@ -5,6 +5,7 @@ from graph_managers import GraphManager
 from data_parser import processFrontendData, processBackendData
 
 import pickle
+import sys
 
 
 class MyWindow(QMainWindow):
@@ -84,6 +85,17 @@ class MyWindow(QMainWindow):
         graphFile.close()
 
 
+    def closeEvent(self, event):
+        close = QMessageBox.question(self,
+                                     "Quit Graph-Visualization",
+                                     "Are you sure you want to quit? All unsaved changes will be lost",
+                                     QMessageBox.Yes | QMessageBox.No)
+        if close == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
+
+
 class GraphViewer(QGraphicsView):
 
     def __init__(self):
@@ -159,4 +171,5 @@ if __name__ == '__main__':
     desktop = QDesktopWidget()
     panel = MyWindow(desktop.width(), desktop.height())
 
-    app.exec_()
+    ret = app.exec_()
+    sys.exit(ret)
