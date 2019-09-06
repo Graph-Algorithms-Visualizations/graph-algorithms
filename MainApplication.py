@@ -113,12 +113,8 @@ class GraphViewer(QGraphicsView):
         return data
 
     def setData(self, node_objs, edge_matrix, rotation_angle):
-        if not self.container:
-            self.container = GraphContainer(node_objs, edge_matrix)
-            self.setScene(self.container)
-        else:
-            self.container.setGraphData(node_objs, edge_matrix)
-        self.rotate(rotation_angle - self.angle)
+        self.container = GraphContainer(node_objs, edge_matrix)
+        self.setScene(self.container)
 
 
 class GraphContainer(QGraphicsScene):
@@ -154,6 +150,12 @@ class GraphContainer(QGraphicsScene):
         mousePos = event.scenePos()
         item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
         self.GraphManager.mouseReleaseEvent(event, item)
+
+    def mouseDoubleClickEvent(self, event):
+        super().mouseDoubleClickEvent(event)
+        mousePos = event.scenePos()
+        item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
+        self.GraphManager.mouseDoubleClickEvent(event, item)
 
     def getGraphData(self):
         node_objs, edge_matrix = self.GraphManager.getData()
