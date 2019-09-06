@@ -1,23 +1,33 @@
 from PyQt5.QtWidgets import QGraphicsItem, QGraphicsLineItem
-from PyQt5.QtGui import QBrush, QPen
+from PyQt5.QtGui import QBrush, QPen, QColor
 from PyQt5.QtCore import Qt, QRectF, QPoint
 
 
 class Node(QGraphicsItem):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, key):
         super().__init__()
         self.setAcceptHoverEvents(True)
         self.center = QPoint(x, y)
         self.onFocus = False
-        self.radius = 10
+        self.clicked = False
         self.type = 'node'
+        self.key = key
+
+        self.radius = 15
+        self.color = QColor(255, 0, 0)
+        self.focusColor = QColor(255, 153, 51)
+        self.clickedColor = QColor(255, 255, 0)
+        self.outlineColor = QColor(153, 0, 0)
 
     def paint(self, painter, styleoptions, widget=None):
-        if self.onFocus:
-            painter.setBrush(QBrush(Qt.yellow))
+        if self.clicked:
+            painter.setBrush(QBrush(self.clickedColor))
+        elif self.onFocus:
+            painter.setBrush(QBrush(self.focusColor))
         else:
-            painter.setBrush(QBrush(Qt.red))
+            painter.setBrush(QBrush(self.color))
+        painter.setPen(QPen(self.outlineColor))
         painter.drawEllipse(self.center, self.radius, self.radius)
 
     def boundingRect(self):
@@ -45,8 +55,38 @@ class Edge(QGraphicsLineItem):
             self.endy = fromNode.center.y()
 
         super().__init__(fromNode.center.x(), fromNode.center.y(), self.endx, self.endy)
-        self.setPen(QPen(Qt.black, 3))
+        self.setPen(QPen(Qt.black, 5))
         self.setZValue(-1)
+        self.type = 'edge'
+        self.clicked = False
+        self.setAcceptHoverEvents(True)
+        self.onFocus = False
+
+        self.color = QColor(0, 0, 0)
+        self.focusColor = QColor(0, 100, 100)
+        self.clickedColor = QColor(0, 204, 204)
+        self.width = 6
 
     def setEnd(self, x, y):
         self.setLine(self.fromNode.center.x(), self.fromNode.center.y(), x, y)
+
+    def paint(self, painter, styleoptions, widget=None):
+        if self.clicked:
+            pen = QPen(self.clickedColor)
+        elif self.onFocus:
+            pen = QPen(self.focusColor)
+        else:
+            pen = QPen(self.color)
+
+        pen.setCapStyle(Qt.RoundCap)
+        pen.setWidth(self.width)
+        self.setPen(pen)
+        super().paint(painter, styleoptions, widget)
+
+    def hoverEnterEvent(self, event):
+        self.onFocus = True
+        self.update()
+
+    def hoverLeaveEvent(self, event):
+        self.onFocus = False
+        self.update()
