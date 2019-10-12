@@ -3,7 +3,7 @@ from PyQt5.QtGui import QTransform, QPainter, QIcon, QColor
 
 from graph_managers import GraphManager
 from data_parser import processFrontendData, processBackendData
-
+from modify import Graph
 import pickle
 import sys
 
@@ -91,8 +91,8 @@ class MyWindow(QMainWindow):
             nodes = graphData['nodes']
             edges = graphData['edges']
             rotation_angle = graphData['angle']
-            node_objs, edge_matrix = processBackendData(nodes, edges)
-            self.view.setData(node_objs, edge_matrix, rotation_angle)
+            nodeList, adjacencyList = processBackendData(nodes, edges)
+            self.view.setData(Graph(nodeList, adjacencyList), rotation_angle)
             graphFile.close()
             self.saveFileAction.setDisabled(False)
 
@@ -128,15 +128,15 @@ class GraphViewer(QGraphicsView):
         self.angle = 0
 
     def newData(self):
-        self.setData({}, [], 0)
+        self.setData(Graph([],[]), 0)
 
     def getData(self):
         data = self.container.getGraphData()
         data['angle'] = self.angle
         return data
 
-    def setData(self, node_objs, edge_matrix, rotation_angle):
-        self.container = GraphContainer(node_objs, edge_matrix)
+    def setData(self, newGraph, rotation_angle):
+        self.container = GraphContainer(newGraph)
         self.setScene(self.container)
 
     def setPenColor(self, color):
@@ -145,11 +145,11 @@ class GraphViewer(QGraphicsView):
 
 class GraphContainer(QGraphicsScene):
 
-    def __init__(self, node_objs, edge_matrix):
+    def __init__(self, newGraph):
         super().__init__()
         self.pressed = False
         self.drawing_edge = None
-        self.graph_manager = GraphManager(self, node_objs, edge_matrix)
+        self.graph_manager = GraphManager(self, newGraph)
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
