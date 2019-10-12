@@ -1,4 +1,5 @@
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
 
 from graphic_items import Node, Edge
 
@@ -12,6 +13,10 @@ class GraphManager:
     
     def __init__(self, container, nodes, edge_matrix):
         self.container = container
+        self.temp_edge = None
+        self.selectedItem = None
+        self.penColor = None
+
         if len(nodes) > 0:
             self.currentKey = max([key for key in nodes]) + 1
         else:
@@ -30,13 +35,13 @@ class GraphManager:
                 if edge:
                     self.addEdge(edge)
 
-        self.temp_edge = None
-        self.selectedItem = None
 
     # adds edge in gui and in stored matrix
     # any doubt contact arib
 
     def addEdge(self, edge, temp=False):
+        if self.penColor:
+            edge.setPenColor(self.penColor)
         if edge:
             self.container.addItem(edge)
         if not temp:
@@ -55,6 +60,8 @@ class GraphManager:
     # any doubt contact arib
 
     def addNode(self, key, node):
+        if self.penColor:
+            node.setPenColor(self.penColor)
         self.container.addItem(node)
         self.nodes[key] = node
         if key == self.currentKey:
@@ -89,6 +96,9 @@ class GraphManager:
         else:
             self.selectedItem = item
             self.selectedItem.clicked = True
+
+    def setPenColor(self, penColor):
+        self.penColor = penColor
 
     def mouseMoveEvent(self, event, item):
 

@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt, QRectF, QPoint
 
 class Node(QGraphicsItem):
 
-    def __init__(self, x, y, key):
+    def __init__(self, x, y, key, color=None):
         super().__init__()
         self.setAcceptHoverEvents(True)
         self.center = QPoint(x, y)
@@ -15,7 +15,11 @@ class Node(QGraphicsItem):
         self.key = key
 
         self.radius = 15
-        self.color = QColor(255, 0, 0)
+        if color:
+            self.color = color
+        else:
+            self.color = QColor(255, 0, 0)
+
         self.focusColor = QColor(255, 153, 51)
         self.clickedColor = QColor(255, 255, 0)
         self.outlineColor = QColor(153, 0, 0)
@@ -29,6 +33,9 @@ class Node(QGraphicsItem):
             painter.setBrush(QBrush(self.color))
         painter.setPen(QPen(self.outlineColor))
         painter.drawEllipse(self.center, self.radius, self.radius)
+
+    def setPenColor(self, color):
+        self.color = color
 
     def boundingRect(self):
         return QRectF(self.center.x() - self.radius, self.center.y() - self.radius, 2 * self.radius, 2 * self.radius)
@@ -44,7 +51,7 @@ class Node(QGraphicsItem):
 
 class Edge(QGraphicsLineItem):
 
-    def __init__(self, fromNode, toNode):
+    def __init__(self, fromNode, toNode, color=None):
         self.fromNode = fromNode
         self.toNode = toNode
         if toNode:
@@ -62,13 +69,19 @@ class Edge(QGraphicsLineItem):
         self.setAcceptHoverEvents(True)
         self.onFocus = False
 
-        self.color = QColor(0, 0, 0)
+        if color:
+            self.color = color
+        else:
+            self.color = QColor(0, 0, 0)
         self.focusColor = QColor(0, 100, 100)
         self.clickedColor = QColor(0, 204, 204)
         self.width = 6
 
     def setEnd(self, x, y):
         self.setLine(self.fromNode.center.x(), self.fromNode.center.y(), x, y)
+
+    def setPenColor(self, color):
+        self.color = color
 
     def paint(self, painter, styleoptions, widget=None):
         if self.clicked:
