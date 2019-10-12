@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QTransform, QPainter
+from PyQt5.QtGui import QTransform, QPainter, QIcon, QColor
 
 from graph_managers import GraphManager
 from data_parser import processFrontendData, processBackendData
@@ -37,10 +37,33 @@ class MyWindow(QMainWindow):
         fileMenu.addAction(openFileAction)
         fileMenu.addAction(saveFileAction)
 
+        redColorAction = QAction(QIcon('red_color.png'), "Set Red Pen", self)
+        redColorAction.triggered.connect(self.setRedPen)
+
+        blueColorAction = QAction(QIcon('blue_color.jpg'), "Set Blue Pen", self)
+        blueColorAction.triggered.connect(self.setBluePen)
+
+        blackColorAction = QAction(QIcon('black_color.jpg'), "Set Black Pen", self)
+        blackColorAction.triggered.connect(self.setBlackPen)
+
+        toolBar = self.addToolBar("Pen Color")
+        toolBar.addAction(redColorAction)
+        toolBar.addAction(blueColorAction)
+        toolBar.addAction(blackColorAction)
+
         self.isViewMounted = False
 
         self.setMenuBar(menuBar)
         self.show()
+
+    def setRedPen(self):
+        self.view.setPenColor(QColor(255, 0, 0))
+
+    def setBluePen(self):
+        self.view.setPenColor(QColor(0, 0, 255))
+
+    def setBlackPen(self):
+        self.view.setPenColor(QColor(0, 0, 0))
 
     def newGraph(self):
 
@@ -116,6 +139,9 @@ class GraphViewer(QGraphicsView):
         self.container = GraphContainer(node_objs, edge_matrix)
         self.setScene(self.container)
 
+    def setPenColor(self, color):
+        self.container.setPenColor(color)
+
 
 class GraphContainer(QGraphicsScene):
 
@@ -123,7 +149,7 @@ class GraphContainer(QGraphicsScene):
         super().__init__()
         self.pressed = False
         self.drawing_edge = None
-        self.GraphManager = GraphManager(self, node_objs, edge_matrix)
+        self.graph_manager = GraphManager(self, node_objs, edge_matrix)
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
@@ -131,7 +157,7 @@ class GraphContainer(QGraphicsScene):
 
         mousePos = event.scenePos()
         item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-        self.GraphManager.mousePressEvent(event, item)
+        self.graph_manager.mousePressEvent(event, item)
         self.update()
 
     def mouseMoveEvent(self, event):
@@ -141,7 +167,7 @@ class GraphContainer(QGraphicsScene):
 
             mousePos = event.scenePos()
             item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-            self.GraphManager.mouseMoveEvent(event, item)
+            self.graph_manager.mouseMoveEvent(event, item)
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
@@ -149,22 +175,25 @@ class GraphContainer(QGraphicsScene):
 
         mousePos = event.scenePos()
         item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-        self.GraphManager.mouseReleaseEvent(event, item)
+        self.graph_manager.mouseReleaseEvent(event, item)
 
     def mouseDoubleClickEvent(self, event):
         super().mouseDoubleClickEvent(event)
         mousePos = event.scenePos()
         item = self.itemAt(mousePos.x(), mousePos.y(), QTransform())
-        self.GraphManager.mouseDoubleClickEvent(event, item)
+        self.graph_manager.mouseDoubleClickEvent(event, item)
 
     def getGraphData(self):
-        node_objs, edge_matrix = self.GraphManager.getData()
+        node_objs, edge_matrix = self.graph_manager.getData()
         return processFrontendData(node_objs, edge_matrix)
 
     def setGraphData(self, node_objs, edge_matrix):
         self.clear()
-        self.GraphManager = GraphManager(self, node_objs, edge_matrix)
+        self.graph_manager = GraphManager(self, node_objs, edge_matrix)
         self.update()
+
+    def setPenColor(self, color):
+        self.graph_manager.setPenColor(color)
 
 
 if __name__ == '__main__':
