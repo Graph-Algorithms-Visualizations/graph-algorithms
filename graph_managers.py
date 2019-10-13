@@ -1,8 +1,9 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
-
+from modify import Graph
 from graphic_items import Node, Edge
 
+import copy
 
 class GraphManager:
     # Parameters as container nodes and edge_matrix
@@ -41,10 +42,10 @@ class GraphManager:
         self.selectedItem = None
         self.penColor = None
         self.graph = None
-        if len(nodes) > 0:
-            self.currentKey = max([key for key in nodes]) + 1
-        else:
-            self.currentKey = 0
+        # if len(nodes) > 0:
+        #     self.currentKey = max([key for key in nodes]) + 1
+        # else:
+        #     self.currentKey = 0
 
         self.updateVirtualGraph(newGraph)
 
@@ -56,16 +57,19 @@ class GraphManager:
             for node in self.graph.nodeList:
                 self.removeNode(node)
             # Add new nodes and its edges
-        else:
-            self.graph = newGraph
+        # else:
+        #     self.graph = newGraph
 
         # Adding nodes in graph
-        for node in self.graph.nodeList:
-            self.addNode(0, node)
 
-        for edges in self.graph.adjacencyList:
+        self.graph = Graph([], [])
+
+        for node in newGraph.nodeList:
+            self.addNode(node)
+
+        for edges in newGraph.adjacencyList:
             for edge in edges:
-                self.addEdge(edge)
+                self.addEdge(edge, False, True)
 
     # adds edge in gui and in stored matrix
     # any doubt contact arib
@@ -79,13 +83,15 @@ class GraphManager:
     #         self.edges[edge.fromNode.key][edge.toNode.key] = edge
     
     def addEdge(self, edge, temp=False, directed = False):
+        cnt = 0
         if self.penColor:
             edge.setPenColor(self.penColor)
         if edge:
             self.container.addItem(edge)
+            # cnt = cnt + 1
         if not temp:
-            adj = self.adjacencyList
-            nodes = self.nodeList
+            adj = self.graph.adjacencyList
+            nodes = self.graph.nodeList
 
             toNode = edge.toNode
             fromNode = edge.fromNode
@@ -93,8 +99,15 @@ class GraphManager:
             adj[fromNode.key].append(edge)
             
             if(directed == False):
-                newReverseEdge = Edge(toNode,fromNode)
+                newReverseEdge = Edge(toNode,fromNode, edge.color)
+                # if self.penColor:
+                #     newReverseEdge.setPenColor(self.penColor)
                 adj[toNode.key].append(newReverseEdge)
+                self.container.addItem(newReverseEdge)
+                # cnt = cnt + 1
+            self.printAdjList()
+        print(str(cnt))
+
 
     # removes edge in gui and stored matrix
     # any doubt contact sid
@@ -104,24 +117,28 @@ class GraphManager:
     #     if not temp:
     #         self.edges[edge.fromNode.key][edge.toNode.key] = None
     def removeEdge(self, edge, temp=False, directed = False):
-        self.container.removeItem(edge)  
+        self.container.removeItem(edge)
+        # print('yeh remove edge 1 wala hai')
+        # self.printAdjList()
         if not temp:
             toNode = edge.toNode
             fromNode = edge.fromNode
             
             self.removeEdgeFromList(fromNode, toNode)
-            if(directed == False):
+            if directed == False:
                 self.removeEdgeFromList(toNode, fromNode)
+        # print('yeh remove edge 2 wala hai')
+        # self.printAdjList()
 
 
     #to remove edge from list
     def removeEdgeFromList(self, fromNode, toNode):
-        adj = self.adjacencyList[fromNode.key]
+        adj = self.graph.adjacencyList[fromNode.key]
         newAdj = []
         for i in range(len(adj)):
             if(adj[i].toNode.key != toNode.key):
                 newAdj.append(adj[i])
-        self.adjacencyList[fromNode.key] = newAdj
+        self.graph.adjacencyList[fromNode.key] = newAdj
 
     # adds edge in gui and in stored matrix
     # any doubt contact arib
@@ -136,7 +153,7 @@ class GraphManager:
     #         for row in self.edges:
     #             row.append(None)
 
-    def addNode(self, key, node):
+    def addNode(self, node):
         if self.penColor:
             node.setPenColor(self.penColor)
         self.container.addItem(node)
@@ -145,11 +162,13 @@ class GraphManager:
         nodes = self.graph.nodeList
 
         node.key = len(nodes)
+        # print(node.key)
         nodes.append(node)
 
         newList = []
         adj.append(newList)
-        
+        print('yeh add node wala hai')
+        self.printAdjList()
 
 
     # removes node in gui and stored matrix and 
@@ -164,43 +183,48 @@ class GraphManager:
     #     for i in range(len(self.edges)):
     #         if self.edges[i][node.key]:
     #             self.removeEdge(self.edges[i][node.key])
+    def printAdjList(self):
+        for i in range(len(self.graph.adjacencyList)):
+            print('adj - ' + str(i) + ':', end = ' ')
+            for j in range(len(self.graph.adjacencyList[i])):
+                print(self.graph.adjacencyList[i][j].toNode.key,end = ' ')
+            print()
+        print()
+        print()
 
     def removeNode(self, node):
 
-        newIndex = [-1 for i in range(len(self.nodeList))]
-        indexCounter = 0
-        for i in range(len(self.nodeList)):
-            if(i != node.key):
-                newIndex[i] = indexCounter
-                indexCounter = indexCounter + 1
+        self.container.removeItem(node)
 
-        #create modified adjacency list
-        adj = [] 
-        currentSize = 0
-        for i in range(len(self.graph.adjacencyList)):
-            
-            if(i != node.key):
-                currentSize = currentSize + 1
-                adj.append([])
 
-                for j in range(len(self.graph.adjacencyList[i])):
-                    if(self.graph.adjacencyList[i][j].toNode.key != node.key):
-                        modifiedEdge = copy.deepcopy(self.graph.adjacencyList[i][j])
-                        modifiedEdge.fromNode.key = newIndex[modifiedEdge.fromNode.key]
-                        modifiedEdge.toNode.key = newIndex[modifiedEdge.toNode.key]
-                        adj[currentSize - 1].append(modifiedEdge) 
-        
-        #create modified nodeList
-        nodes = []
-        for i in range(len(self.graph.nodeList)):
-            if(self.graph.nodeList[i].key != node.key):
-                modifiedNode = self.graph.nodeList[i]
-                modifiedNode = newIndex[modifiedNode.key]
-                nodes.append(modifiedNode)
+        # print(node.key)
+        # print(len(self.graph.adjacencyList))
+        for edge in self.graph.adjacencyList[node.key]:
+            self.container.removeItem(edge)
 
-        self.graph.adjacencyList = adj
-        self.graph.nodeList = nodes
+        self.graph.adjacencyList.pop(node.key)
+        print('yeh rm node 1')
+        self.printAdjList()
+        for edgelist in self.graph.adjacencyList:
+            tempEdge = []
+            for edge in edgelist:
+                if edge.toNode.key == node.key or edge.fromNode.key == node.key:
+                    tempEdge.append(edge)
+                    break
+            for e in tempEdge:
+                self.container.removeItem(e)
+                edgelist.remove(e)
 
+        self.printAdjList()
+
+
+        for nde in self.graph.nodeList:
+            if nde.key > node.key:
+                nde.key = nde.key - 1
+
+        self.graph.nodeList.remove(node)
+
+        self.printAdjList()
     # any doubt contact arib
     def toggleItem(self, item):
 
@@ -292,13 +316,12 @@ class GraphManager:
         mousePos = event.scenePos()
         if not item:
             # Add Node
-            node = Node(mousePos.x(), mousePos.y(), self.currentKey)
-            self.addNode(self.currentKey, node)
-            self.currentKey += 1
+            node = Node(mousePos.x(), mousePos.y())
+            self.addNode(node)
 
 
     def getData(self):
-        return self.nodes, self.edges
+        return self.graph.nodeList, self.graph.adjacencyList
 
     def printMatrix(self):
         for row in self.edges:

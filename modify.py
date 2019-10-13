@@ -1,5 +1,5 @@
 import copy
-
+from graphic_items import Edge, Node
 # class Node:
 #     def __init__(self,data):
 #         self.key = data
@@ -90,8 +90,10 @@ class Graph:
                 adj.append([])
 
                 for j in range(len(self.adjacencyList[i])):
-                    if(self.adjacencyList[i][j].toNode.key != node.key):
-                        modifiedEdge = copy.deepcopy(self.adjacencyList[i][j])
+                    tempEdge = self.adjacencyList[i][j]
+                    if(tempEdge.toNode.key != node.key):
+                        # modifiedEdge = copy.deepcopy(self.adjacencyList[i][j])
+                        modifiedEdge = Edge(tempEdge.fromNode, tempEdge.toNode, tempEdge.color)
                         modifiedEdge.fromNode.key = newIndex[modifiedEdge.fromNode.key]
                         modifiedEdge.toNode.key = newIndex[modifiedEdge.toNode.key]
                         adj[currentSize - 1].append(modifiedEdge) 
