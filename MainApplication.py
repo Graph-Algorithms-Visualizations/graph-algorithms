@@ -6,7 +6,7 @@ from data_parser import processFrontendData, processBackendData
 from modify import Graph
 import pickle
 import sys
-
+import NPAlgorithms as algo
 
 class MyWindow(QMainWindow):
 
@@ -31,11 +31,26 @@ class MyWindow(QMainWindow):
         saveFileAction.setDisabled(True)
         self.saveFileAction = saveFileAction
 
+        minimumDominantSetAction = QAction("Minimum Dominant Set", self)
+        minimumDominantSetAction.triggered.connect(lambda x: self.callAlgorithms(1))
+
+        maximumIndependentSetAction = QAction("Maximum Independent Set", self)
+        maximumIndependentSetAction.triggered.connect(lambda x: self.callAlgorithms(2))
+
+        maximumCliqueAction = QAction("Maximum Clique", self)
+        maximumCliqueAction.triggered.connect(lambda x: self.callAlgorithms(3))
+
         menuBar = QMenuBar()
         fileMenu = menuBar.addMenu("File")
         fileMenu.addAction(newFileAction)
         fileMenu.addAction(openFileAction)
         fileMenu.addAction(saveFileAction)
+
+
+        algorithmsMenu = menuBar.addMenu("Algorithms")
+        algorithmsMenu.addAction(minimumDominantSetAction)
+        algorithmsMenu.addAction(maximumIndependentSetAction)
+        algorithmsMenu.addAction(maximumCliqueAction)
 
         redColorAction = QAction(QIcon('red_color.png'), "Set Red Pen", self)
         redColorAction.triggered.connect(self.setRedPen)
@@ -118,6 +133,10 @@ class MyWindow(QMainWindow):
         else:
             event.ignore()
 
+    def callAlgorithms(self, id):
+        self.view.callAlgorithms(id)
+
+
 
 class GraphViewer(QGraphicsView):
 
@@ -141,6 +160,9 @@ class GraphViewer(QGraphicsView):
 
     def setPenColor(self, color):
         self.container.setPenColor(color)
+    
+    def callAlgorithms(self, id):
+        self.container.callAlgorithms(id)
 
 
 class GraphContainer(QGraphicsScene):
@@ -195,6 +217,8 @@ class GraphContainer(QGraphicsScene):
     def setPenColor(self, color):
         self.graph_manager.setPenColor(color)
 
+    def callAlgorithms(self, id):
+        self.graph_manager.callAlgorithms(id)
 
 if __name__ == '__main__':
     app = QApplication([])

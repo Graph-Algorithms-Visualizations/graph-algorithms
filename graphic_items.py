@@ -37,6 +37,18 @@ class Node(QGraphicsItem):
     def setPenColor(self, color):
         self.color = color
 
+    def addMask(self):
+        self.color.setAlpha(50)
+        self.focusColor.setAlpha(50)
+        self.clickedColor.setAlpha(50)
+        self.outlineColor.setAlpha(50)
+
+    def removeMask(self):
+        self.color.setAlpha(255)
+        self.focusColor.setAlpha(255)
+        self.clickedColor.setAlpha(255)
+        self.outlineColor.setAlpha(255)
+
     def boundingRect(self):
         return QRectF(self.center.x() - self.radius, self.center.y() - self.radius, 2 * self.radius, 2 * self.radius)
 
@@ -82,6 +94,18 @@ class Edge(QGraphicsLineItem):
 
     def setPenColor(self, color):
         self.color = color
+
+    def addMask(self):
+        self.color.setAlpha(50)
+        self.focusColor.setAlpha(50)
+        self.clickedColor.setAlpha(50)
+        self.outlineColor.setAlpha(50)
+
+    def removeMask(self):
+        self.color.setAlpha(255)
+        self.focusColor.setAlpha(255)
+        self.clickedColor.setAlpha(255)
+        self.outlineColor.setAlpha(255)
 
     def paint(self, painter, styleoptions, widget=None):
         if self.clicked:

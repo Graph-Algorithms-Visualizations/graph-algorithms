@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from modify import Graph
 from graphic_items import Node, Edge
-
+from NPAlgorithms import AlgorithmManager
 import copy
 
 class GraphManager:
@@ -11,30 +11,6 @@ class GraphManager:
     # nodes is a dictionary of cordinates as values mapped to its indices as keys
     # converted nodes to self.nodes which is dictionary of nodes class object mapped to indices as keys
     # converted edge_matrix to self.edges which is 2d matrix of edge class objects
-    
-    # def __init__(self, container, nodes, edge_matrix):
-    #     self.container = container
-    #     self.temp_edge = None
-    #     self.selectedItem = None
-    #     self.penColor = None
-
-    #     if len(nodes) > 0:
-    #         self.currentKey = max([key for key in nodes]) + 1
-    #     else:
-    #         self.currentKey = 0
-
-    #     self.nodes = {}
-    #     self.edges = []
-    #     for _ in range(self.currentKey):
-    #         self.edges.append([None] * self.currentKey)
-
-    #     for key, val in nodes.items():
-    #         self.addNode(key, val)
-
-    #     for row in edge_matrix:
-    #         for edge in row:
-    #             if edge:
-    #                 self.addEdge(edge)
 
     def __init__(self, container, newGraph):
         self.container = container
@@ -42,12 +18,10 @@ class GraphManager:
         self.selectedItem = None
         self.penColor = None
         self.graph = None
-        # if len(nodes) > 0:
-        #     self.currentKey = max([key for key in nodes]) + 1
-        # else:
-        #     self.currentKey = 0
-
+        self.vertexMask = []
         self.updateVirtualGraph(newGraph)
+        self.AlgorithmManager = AlgorithmManager(self.graph)
+
 
     def updateVirtualGraph(self, newGraph):
         if self.graph:
@@ -56,9 +30,6 @@ class GraphManager:
             # Remove all nodes first
             for node in self.graph.nodeList:
                 self.removeNode(node)
-            # Add new nodes and its edges
-        # else:
-        #     self.graph = newGraph
 
         # Adding nodes in graph
 
@@ -74,14 +45,6 @@ class GraphManager:
     # adds edge in gui and in stored matrix
     # any doubt contact arib
 
-    # def addEdge(self, edge, temp=False):
-    #     if self.penColor:
-    #         edge.setPenColor(self.penColor)
-    #     if edge:
-    #         self.container.addItem(edge)
-    #     if not temp:
-    #         self.edges[edge.fromNode.key][edge.toNode.key] = edge
-    
     def addEdge(self, edge, temp=False, directed = False):
         cnt = 0
         if self.penColor:
@@ -111,11 +74,6 @@ class GraphManager:
 
     # removes edge in gui and stored matrix
     # any doubt contact sid
-
-    # def removeEdge(self, edge, temp=False):
-    #     self.container.removeItem(edge)  
-    #     if not temp:
-    #         self.edges[edge.fromNode.key][edge.toNode.key] = None
     def removeEdge(self, edge, temp=False, directed = False):
         self.container.removeItem(edge)
         # print('yeh remove edge 1 wala hai')
@@ -143,16 +101,6 @@ class GraphManager:
     # adds edge in gui and in stored matrix
     # any doubt contact arib
 
-    # def addNode(self, key, node):
-    #     if self.penColor:
-    #         node.setPenColor(self.penColor)
-    #     self.container.addItem(node)
-    #     self.nodes[key] = node
-    #     if key == self.currentKey:
-    #         self.edges.append([None]*key)
-    #         for row in self.edges:
-    #             row.append(None)
-
     def addNode(self, node):
         if self.penColor:
             node.setPenColor(self.penColor)
@@ -174,15 +122,6 @@ class GraphManager:
     # removes node in gui and stored matrix and 
     # any doubt contact sid
 
-    # def removeNode(self, node):
-    #     self.container.removeItem(node)
-    #     self.nodes.pop(node.key)
-    #     for edge in self.edges[node.key]:
-    #         if edge:
-    #             self.removeEdge(edge)
-    #     for i in range(len(self.edges)):
-    #         if self.edges[i][node.key]:
-    #             self.removeEdge(self.edges[i][node.key])
     def printAdjList(self):
         for i in range(len(self.graph.adjacencyList)):
             print('adj - ' + str(i) + ':', end = ' ')
@@ -197,8 +136,6 @@ class GraphManager:
         self.container.removeItem(node)
 
 
-        # print(node.key)
-        # print(len(self.graph.adjacencyList))
         for edge in self.graph.adjacencyList[node.key]:
             self.container.removeItem(edge)
 
@@ -302,15 +239,11 @@ class GraphManager:
 
         else:
 
-            # Add Node
-            # node = Node(mousePos.x(), mousePos.y(), self.currentKey)
-            # self.addNode(self.currentKey, node)
-            # self.currentKey += 1
-
-            # self.toggleItem(node)
             if self.selectedItem:
                 self.selectedItem.clicked = False
                 self.selectedItem = None
+
+            self.removeMask()
 
     def mouseDoubleClickEvent(self, event, item):
         mousePos = event.scenePos()
@@ -322,6 +255,27 @@ class GraphManager:
 
     def getData(self):
         return self.graph.nodeList, self.graph.adjacencyList
+
+    def callAlgorithms(self, id):
+        self.removeMask()
+        self.vertexMask = self.AlgorithmManager.runAlgorithm(id)
+        self.addMask()
+
+    def addMask(self):
+
+        for i in range(len(self.vertexMask)):
+            if not self.vertexMask[i]:
+                self.graph.nodeList[i].addMask()
+
+        self.container.update()
+
+    def removeMask(self):
+
+        for i in range(len(self.vertexMask)):
+            if not self.vertexMask[i]:
+                self.graph.nodeList[i].removeMask()
+
+        self.container.update()
 
     def printMatrix(self):
         for row in self.edges:
