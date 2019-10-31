@@ -243,6 +243,8 @@ class GraphManager:
                 self.selectedItem.clicked = False
                 self.selectedItem = None
 
+            self.removeMask()
+
     def mouseDoubleClickEvent(self, event, item):
         mousePos = event.scenePos()
         if not item:
@@ -255,8 +257,25 @@ class GraphManager:
         return self.graph.nodeList, self.graph.adjacencyList
 
     def callAlgorithms(self, id):
+        self.removeMask()
         self.vertexMask = self.AlgorithmManager.runAlgorithm(id)
-        print(str(self.vertexMask))
+        self.addMask()
+
+    def addMask(self):
+
+        for i in range(len(self.vertexMask)):
+            if not self.vertexMask[i]:
+                self.graph.nodeList[i].addMask()
+
+        self.container.update()
+
+    def removeMask(self):
+
+        for i in range(len(self.vertexMask)):
+            if not self.vertexMask[i]:
+                self.graph.nodeList[i].removeMask()
+
+        self.container.update()
 
     def printMatrix(self):
         for row in self.edges:
