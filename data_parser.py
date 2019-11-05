@@ -30,13 +30,6 @@ def processFrontendData(nodeList, adjacencyList):
 
 def processBackendData(node_data, edge_data):
 
-    # node_objs = {
-    #     key: Node(val['x'], val['y'], key, QColor(val['color'][0], val['color'][1], val['color'][2]))
-    #     for key, val in node_data.items()
-    # }
-
-    print(str(node_data))
-    print(str(edge_data))
 
     nodeList = [Node(val['x'], val['y'], QColor(val['color'][0], val['color'][1], val['color'][2])) for key, val in node_data.items()]
 
@@ -45,19 +38,5 @@ def processBackendData(node_data, edge_data):
          for edge in edges]
         for edges in edge_data
     ]
-
-    print(str(nodeList))
-    print(str(adjacencyList))
-
-    # edge_matrix = []
-    # for i in range(len(edge_data)):
-    #     row = []
-    #     for j in range(len(edge_data)):
-    #         if edge_data[i][j]:
-    #             row.append(Edge(node_objs[i], node_objs[j], QColor(edge_data[i][j]['color'][0], edge_data[i][j]['color'][1],
-    #                                                                edge_data[i][j]['color'][2])))
-    #         else:
-    #             row.append(None)
-    #     edge_matrix.append(row)
 
     return nodeList, adjacencyList
