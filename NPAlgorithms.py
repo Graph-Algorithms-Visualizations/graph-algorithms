@@ -218,7 +218,7 @@ class AlgorithmManager:
                 if maximum < involvedNodes:
                     maximum = involvedNodes
                     maximumSet = binary
-        
+                    
         return maximumSet
 
     
@@ -249,7 +249,6 @@ class AlgorithmManager:
                 
                 if not visitAllNeighborClique(visited, binary):
                     return False
-
         return True
 
 
@@ -280,5 +279,5 @@ class AlgorithmManager:
                 if maximum < involvedNodes:
                     maximum = involvedNodes
                     maximumSet = binary
-        
+
         return maximumSet
