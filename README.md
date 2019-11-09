@@ -23,6 +23,14 @@
 
 ### UML Diagram
 
+* Package Diagram:
+
+![alt text](https://github.com/Graph-Algorithms-Visualizations/graph-algorithms/blob/assets/UML/package_diagram.jpg)
+
+* Class Diagram:
+
+![alt text](https://github.com/Graph-Algorithms-Visualizations/graph-algorithms/blob/assets/UML/class_diagram.jpg)
+
 * State Diagram:
   This is a state diagram of an undirected graph with two nodes and one edge.
   
