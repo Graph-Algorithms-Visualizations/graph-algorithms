@@ -20,3 +20,20 @@
 
 * To save the current graph, click `Save Graph`, make sure to save the file with a `.graph` extension.
 * To load previous graph, click on `Load Graph`.
+
+### UML Diagram
+
+* State Diagram:
+  This is a state diagram of an undirected graph with two nodes and one edge.
+  
+![alt text](https://github.com/Graph-Algorithms-Visualizations/graph-algorithms/blob/assets/UML/state_diagram.jpg)
+
+
+* Activity Diagram:
+
+![alt text](https://github.com/Graph-Algorithms-Visualizations/graph-algorithms/blob/assets/UML/Activity_Diagram.jpg)
+
+
+* Use Case Diagram:
+
+![alt text](https://github.com/Graph-Algorithms-Visualizations/graph-algorithms/blob/assets/UML/Use_Case.jpg)
