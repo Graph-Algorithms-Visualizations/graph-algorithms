@@ -125,7 +125,6 @@ class GraphManager:
             self.container.removeItem(edge)
 
         self.graph.adjacencyList.pop(node.key)
-        self.printAdjList()
         for edgelist in self.graph.adjacencyList:
             tempEdge = []
             for edge in edgelist:
