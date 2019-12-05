@@ -12,6 +12,7 @@
 * On `double left-click` a `Node` object is added in the graphical scene.
 * On `left-click`, the `Node` is selected.
 * `right-click` on the selected `Node` removes it.
+* Press and hold the mouse from the source node to add edge
 * Same goes for the `Edge` object.
 * On selecting the `Edge/Node`, it becomes highlighted.
 * The screen readjusts to keep the Graph centered.
