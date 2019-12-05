@@ -72,13 +72,13 @@ class MyWindow(QMainWindow):
         self.show()
 
     def setRedPen(self):
-        self.view.setPenColor(QColor(255, 0, 0))
+        self.view.setPenColor((255, 0, 0))
 
     def setBluePen(self):
-        self.view.setPenColor(QColor(0, 0, 255))
+        self.view.setPenColor((0, 0, 255))
 
     def setBlackPen(self):
-        self.view.setPenColor(QColor(0, 0, 0))
+        self.view.setPenColor((0, 0, 0))
 
     def newGraph(self):
 

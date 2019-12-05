@@ -35,7 +35,7 @@ class Node(QGraphicsItem):
         painter.drawEllipse(self.center, self.radius, self.radius)
 
     def setPenColor(self, color):
-        self.color = color
+        self.color = QColor(color[0], color[1], color[2])
 
     def addMask(self):
         self.color.setAlpha(50)
@@ -93,7 +93,7 @@ class Edge(QGraphicsLineItem):
         self.setLine(self.fromNode.center.x(), self.fromNode.center.y(), x, y)
 
     def setPenColor(self, color):
-        self.color = color
+        self.color = QColor(color[0], color[1], color[2])
 
     def addMask(self):
         self.color.setAlpha(50)
