@@ -238,12 +238,10 @@ class GraphManager:
     def callAlgorithms(self, id):
         self.removeMask()
         self.vertexMask = self.AlgorithmManager.runAlgorithm(id)
-        print(self.vertexMask)
         self.addMask()
 
     def addMask(self):
 
-        print(self.graph.nodeList)
         for i in range(len(self.vertexMask)):
             if not self.vertexMask[i]:
                 self.graph.nodeList[i].addMask()
