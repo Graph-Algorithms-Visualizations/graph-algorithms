@@ -43,7 +43,6 @@ class GraphManager:
                 self.addEdge(edge, False, True)
 
     # adds edge in gui and in stored matrix
-    # any doubt contact arib
 
     def addEdge(self, edge, temp=False, directed = False):
         cnt = 0
@@ -51,7 +50,6 @@ class GraphManager:
             edge.setPenColor(self.penColor)
         if edge:
             self.container.addItem(edge)
-            # cnt = cnt + 1
         if not temp:
             adj = self.graph.adjacencyList
             nodes = self.graph.nodeList
@@ -63,20 +61,13 @@ class GraphManager:
             
             if(directed == False):
                 newReverseEdge = Edge(toNode,fromNode, edge.color)
-                # if self.penColor:
-                #     newReverseEdge.setPenColor(self.penColor)
                 adj[toNode.key].append(newReverseEdge)
                 self.container.addItem(newReverseEdge)
-                # cnt = cnt + 1
-            self.printAdjList()
-        print(str(cnt))
 
 
     # removes edge in gui and stored matrix
-    # any doubt contact sid
     def removeEdge(self, edge, temp=False, directed = False):
         self.container.removeItem(edge)
-        # print('yeh remove edge 1 wala hai')
         # self.printAdjList()
         if not temp:
             toNode = edge.toNode
@@ -85,8 +76,6 @@ class GraphManager:
             self.removeEdgeFromList(fromNode, toNode)
             if directed == False:
                 self.removeEdgeFromList(toNode, fromNode)
-        # print('yeh remove edge 2 wala hai')
-        # self.printAdjList()
 
 
     #to remove edge from list
@@ -99,7 +88,6 @@ class GraphManager:
         self.graph.adjacencyList[fromNode.key] = newAdj
 
     # adds edge in gui and in stored matrix
-    # any doubt contact arib
 
     def addNode(self, node):
         if self.penColor:
@@ -115,12 +103,9 @@ class GraphManager:
 
         newList = []
         adj.append(newList)
-        print('yeh add node wala hai')
-        self.printAdjList()
 
 
     # removes node in gui and stored matrix and 
-    # any doubt contact sid
 
     def printAdjList(self):
         for i in range(len(self.graph.adjacencyList)):
@@ -140,8 +125,6 @@ class GraphManager:
             self.container.removeItem(edge)
 
         self.graph.adjacencyList.pop(node.key)
-        print('yeh rm node 1')
-        self.printAdjList()
         for edgelist in self.graph.adjacencyList:
             tempEdge = []
             for edge in edgelist:
@@ -152,8 +135,6 @@ class GraphManager:
                 self.container.removeItem(e)
                 edgelist.remove(e)
 
-        self.printAdjList()
-
 
         for nde in self.graph.nodeList:
             if nde.key > node.key:
@@ -161,7 +142,7 @@ class GraphManager:
 
         self.graph.nodeList.remove(node)
 
-        self.printAdjList()
+
     # any doubt contact arib
     def toggleItem(self, item):
 
@@ -198,7 +179,6 @@ class GraphManager:
             self.temp_edge.setEnd(mousePos.x(), mousePos.y())
             self.container.update()
 
-    # any doubt contact arib
 
     def mouseReleaseEvent(self, event, item):
         if item and item.type == 'node':
@@ -216,7 +196,6 @@ class GraphManager:
 
         self.container.update()
 
-    # any doubt contact arib
 
     def mousePressEvent(self, event, item):
         mousePos = event.scenePos()

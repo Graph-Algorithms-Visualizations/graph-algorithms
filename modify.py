@@ -1,13 +1,5 @@
 import copy
 from graphic_items import Edge, Node
-# class Node:
-#     def __init__(self,data):
-#         self.key = data
-
-# class Edge:
-#     def __init__(self,fromNode,toNode):
-#         self.fromNode = fromNode
-#         self.toNode = toNode
 
 class Graph:
     def __init__(self, nodeList, adjacencyList):
@@ -24,19 +16,7 @@ class Graph:
         newList = []
         adj.append(newList)
         
-        # self.adjacencyList = adj
-        # self.nodeList = nodes
 
-    # def addEdge(self, fromNode, toNode, directed = False):
-    #     adj = self.adjacencyList
-    #     nodes = self.nodeList
-
-    #     newEdge = Edge(fromNode,toNode)
-    #     adj[fromNode.key].append(newEdge)
-
-    #     if(directed == False):
-    #         newReverseEdge = Edge(toNode,fromNode)
-    #         adj[toNode.key].append(newReverseEdge)
     def addEdge(self, edge, directed = False):
         adj = self.adjacencyList
         nodes = self.nodeList
@@ -50,10 +30,6 @@ class Graph:
             newReverseEdge = Edge(toNode,fromNode)
             adj[toNode.key].append(newReverseEdge)
 
-    # def removeEdge(self, fromNode, toNode, directed = False):
-    #     self.removeEdgeFromList(fromNode, toNode)
-    #     if(directed == False):
-    #         self.removeEdgeFromList(toNode, fromNode)
     
     def removeEdge(self, edge, directed = False):
         
